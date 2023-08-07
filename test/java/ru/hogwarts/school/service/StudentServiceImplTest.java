@@ -7,6 +7,7 @@ import org.mockito.Mock;
 import org.mockito.MockitoAnnotations;
 import org.mockito.junit.jupiter.MockitoExtension;
 import ru.hogwarts.school.exeption.StudentNotFoundException;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 
@@ -40,7 +41,7 @@ public class StudentServiceImplTest {
 
         // retrieve the student from service to verify it was added
         when(studentRepository.findById(testStudent.getId())).thenReturn(Optional.of(testStudent));
-        Student retrievedStudent = studentService.readStudent(testStudent.getId());
+        Student retrievedStudent = studentService.getStudent(testStudent.getId());
         assertEquals(testStudent, retrievedStudent);
     }
 
@@ -52,7 +53,7 @@ public class StudentServiceImplTest {
 
         //  to delete the created student
         studentService.deleteStudent(testStudent.getId());
-        assertThrows(StudentNotFoundException.class, () -> studentService.readStudent(testStudent.getId()));
+        assertThrows(StudentNotFoundException.class, () -> studentService.getStudent(testStudent.getId()));
     }
 
     @Test
@@ -83,6 +84,26 @@ public class StudentServiceImplTest {
         assertEquals(2, retrievedStudents.size());
         assertTrue(retrievedStudents.contains(testStudent1));
         assertTrue(retrievedStudents.contains(testStudent2));
+    }
+    @Test
+    public void testGetStudentsByFaculty() {
+        // Предположим, что у нас есть факультет с id 1 и два студента, принадлежащих этому факультету.
+        Faculty faculty = new Faculty("Faculty1", "Green");
+        faculty.setId(1L);
+
+        Student student1 = new Student("John Doe", 20);
+        student1.setFaculty(faculty);
+
+        Student student2 = new Student("Jane Doe", 22);
+        student2.setFaculty(faculty);
+
+        // Возвращаем этих студентов, когда вызывается метод findByFacultyId в репозитории.
+        when(studentRepository.findByFacultyId(1L)).thenReturn(Arrays.asList(student1, student2));
+
+        // Вызываем метод getStudentsByFaculty и проверяем, что он возвращает правильных студентов.
+        List<Student> result = studentService.getStudentsByFaculty(1L);
+        assertEquals(2, result.size());
+        assertTrue(result.containsAll(Arrays.asList(student1, student2)));
     }
 
 }
