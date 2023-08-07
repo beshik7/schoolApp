@@ -1,23 +1,28 @@
 package ru.hogwarts.school.service;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.exeption.FacultyNotFoundException;
 import ru.hogwarts.school.model.Faculty;
+import ru.hogwarts.school.repository.FacultyRepository;
 
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class FacultyServiceImpl implements FacultyService {
-    private Map<Long, Faculty> facultyMap = new HashMap<>();
+    private final FacultyRepository facultyRepository;
+    @Autowired
+    public FacultyServiceImpl(FacultyRepository facultyRepository) {
+        this.facultyRepository = facultyRepository;
+    }
 
     @Override
     public Faculty createFaculty(Faculty faculty) {
-        facultyMap.put(faculty.getId(), faculty);
-        return faculty;
+        return facultyRepository.save(faculty);
     }
 
     @Override
     public Faculty getFaculty(Long id) {
-        return facultyMap.get(id);
+        return facultyRepository.findById(id).orElseThrow(() -> new FacultyNotFoundException("Faculty not found"));
     }
 
     @Override
@@ -25,23 +30,22 @@ public class FacultyServiceImpl implements FacultyService {
         Faculty existing = getFaculty(id);
         existing.setName(faculty.getName());
         existing.setColor(faculty.getColor());
-        facultyMap.put(id, existing);
-        return existing;
+        return facultyRepository.save(existing);
     }
 
     @Override
     public void deleteFaculty(Long id) {
-        facultyMap.remove(id);
+        facultyRepository.deleteById(id);
     }
 
     @Override
     public Collection<Faculty> getAll() {
-        return Collections.unmodifiableCollection(facultyMap.values());
+        return facultyRepository.findAll();
     }
 
     @Override
     public Collection<Faculty> getFilteredByColor(String color) {
-        return getAll().stream().filter(f -> f.getColor().equalsIgnoreCase(color)).collect(Collectors.toList());
+        return facultyRepository.getAllByColor(color);
     }
 
 }

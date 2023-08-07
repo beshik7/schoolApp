@@ -1,55 +1,57 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.hogwarts.school.exeption.FacultyNotFoundException;
+import ru.hogwarts.school.exeption.StudentNotFoundException;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
 import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
 
 @Service
 public class StudentServiceImpl implements StudentService{
-    private Map<Long, Student> studentsMap = new HashMap<>();
 
+private final StudentRepository studentRepository;
+@Autowired
+    public StudentServiceImpl(StudentRepository studentRepository) {
+        this.studentRepository = studentRepository;
+    }
 
     @Override
     public Student createStudent(Student student) {
-        studentsMap.put(student.getId(), student);
-        return student;
+        return studentRepository.save(student);
     }
     @Override
     public Student readStudent(Long id) {
-        return studentsMap.get(id);
+        return studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundException("Student not found"));
     }
     @Override
     public void deleteStudent(Long id) {
-        studentsMap.remove(id);
+        studentRepository.deleteById(id);
     }
 
     @Override
     public Collection<Student> getAll() {
-        return Collections.unmodifiableCollection(studentsMap.values());
+        return Collections.unmodifiableCollection(studentRepository.findAll());
     }
 
     @Override
     public Collection<Student> filteredByAge(int age) {
-        return studentsMap.values().stream()
-                .filter(s -> s.getAge() == age)
-                .collect(Collectors.toList());
+        return studentRepository.findAllByAge(age);
     }
 
     @Override
     public Student getStudent(Long id) {
-        return studentsMap.get(id);
+        return studentRepository.findById(id).orElseThrow(() -> new FacultyNotFoundException("Student not found"));
     }
     @Override
     public Student updateStudent(Long id, Student student) {
         Student existing = getStudent(id);
         existing.setName(student.getName());
         existing.setAge(student.getAge());
-        studentsMap.put(id, existing);
+        studentRepository.save(existing);
         return existing;
     }
 
