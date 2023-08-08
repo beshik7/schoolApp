@@ -62,6 +62,14 @@ public class Faculty {
     public void setId(Long id) {
         this.id = id;
     }
+
+    public Set<Student> getStudents() {
+        return students;
     }
+
+    public void setStudents(Set<Student> students) {
+        this.students = students;
+    }
+}
 
 
