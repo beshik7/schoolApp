@@ -4,15 +4,15 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ResponseStatus(HttpStatus.NOT_FOUND)
-public class StudentNotFoundException extends RuntimeException{
-    public StudentNotFoundException() {
+public class AvatarNotFoundException extends RuntimeException {
+    public AvatarNotFoundException() {
     }
 
-    public StudentNotFoundException(String message) {
+    public AvatarNotFoundException(String message) {
         super(message);
     }
 
-    public StudentNotFoundException(String message, Throwable cause) {
+    public AvatarNotFoundException(String message, Throwable cause) {
         super(message, cause);
     }
 }

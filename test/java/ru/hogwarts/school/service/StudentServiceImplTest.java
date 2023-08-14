@@ -34,7 +34,7 @@ public class StudentServiceImplTest {
     void createStudentTest() {
         Student testStudent = new Student("Harry", 17);
         when(studentRepository.save(any(Student.class))).thenReturn(testStudent);
-        Student createdStudent = studentService.createStudent(testStudent);
+        Student createdStudent = studentService.createStudent(1L, testStudent);
 
         assertNotNull(createdStudent);
         assertEquals(testStudent, createdStudent);
@@ -49,7 +49,7 @@ public class StudentServiceImplTest {
     void deleteStudentTest() {
         Student testStudent = new Student("Herrmeion", 17);
         when(studentRepository.save(any(Student.class))).thenReturn(testStudent);
-        studentService.createStudent(testStudent);
+        studentService.createStudent(1L, testStudent);
 
         //  to delete the created student
         studentService.deleteStudent(testStudent.getId());

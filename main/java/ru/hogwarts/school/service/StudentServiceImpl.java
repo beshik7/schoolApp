@@ -4,7 +4,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exeption.FacultyNotFoundException;
 import ru.hogwarts.school.exeption.StudentNotFoundException;
+import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
+import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
@@ -15,14 +17,19 @@ import java.util.List;
 public class StudentServiceImpl implements StudentService{
 
 private final StudentRepository studentRepository;
+private final FacultyRepository facultyRepository;
 @Autowired
-    public StudentServiceImpl(StudentRepository studentRepository) {
+    public StudentServiceImpl(StudentRepository studentRepository, FacultyRepository facultyRepository) {
         this.studentRepository = studentRepository;
-    }
+    this.facultyRepository = facultyRepository;
+}
 
     @Override
-    public Student createStudent(Student student) {
-        return studentRepository.save(student);
+    public Student createStudent(Long facultyId, Student student) {
+        Faculty faculty = facultyRepository.findById(facultyId).orElseThrow(() -> new FacultyNotFoundException("Faculty not found"));
+        student.setFaculty(faculty);
+        student = studentRepository.save(student);
+        return student;
     }
 
     @Override

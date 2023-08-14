@@ -7,8 +7,8 @@ import java.util.List;
 import java.util.Map;
 
 public interface StudentService {
-    Student createStudent(Student student);
-    Student updateStudent(Long id, Student student);
+    Student createStudent(Long facultyId, Student student);
+    Student updateStudent(Long Id, Student student);
     Student getStudent(Long id);
     void deleteStudent(Long id);
 

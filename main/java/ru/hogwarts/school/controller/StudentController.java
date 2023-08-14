@@ -8,9 +8,9 @@ import ru.hogwarts.school.service.StudentService;
 import java.util.Collection;
 import java.util.List;
 
-@RestController
-@RequestMapping("/student")
-public class StudentController {
+    @RestController
+    @RequestMapping("/student")
+    public class StudentController {
     private final StudentService studentService;
     private final FacultyService facultyService;
 
@@ -24,9 +24,9 @@ public class StudentController {
     public Collection<Student> getAll() {
         return studentService.getAll();
     }
-    @PostMapping
-    public Student createStudent(@RequestBody Student student) {
-        return studentService.createStudent(student);
+    @PostMapping("/faculty/{facultyId}/student")
+    public Student createStudent(@PathVariable Long facultyId, @RequestBody Student student) {
+        return studentService.createStudent(facultyId, student);
     }
 
     @PutMapping("{id}")
