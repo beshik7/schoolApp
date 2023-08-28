@@ -4,6 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.hogwarts.school.exeption.FacultyNotFoundException;
 import ru.hogwarts.school.exeption.StudentNotFoundException;
+import ru.hogwarts.school.model.Age;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
@@ -69,5 +70,20 @@ private final FacultyRepository facultyRepository;
     public List<Student> getStudentsByFaculty(long facultyId) {
     return  studentRepository.findByFacultyId(facultyId);
     }
+    @Override
+    public Long countAllStudents() {
+        return studentRepository.countAllStudents();
+    }
+
+    @Override
+    public Age averageStudentAge() {
+        return studentRepository.averageStudentAge();
+    }
+
+    @Override
+    public List<Student> findLastFiveStudents() {
+        return studentRepository.findLastFiveStudents();
+    }
+
 
 }

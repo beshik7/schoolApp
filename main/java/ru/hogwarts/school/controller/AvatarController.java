@@ -15,8 +15,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.nio.file.Files;
 import java.nio.file.Path;
+import java.util.List;
 
-    @RestController
+@RestController
     public class AvatarController {
     private final AvatarService avatarService;
 
@@ -35,6 +36,11 @@ import java.nio.file.Path;
     httpHeaders.setContentLength(avatar.getFileSize());
     return ResponseEntity.status(HttpStatus.OK).headers(httpHeaders).body(avatar.getData());
     }
+
+    @GetMapping("/avatars")
+    public List<Avatar> getPaginatedAvatars(@RequestParam Integer page, @RequestParam Integer size) {
+        return avatarService.getPaginatedAvatars(page, size);
+    }
     @GetMapping("/avatar/{avatarId}/from-drive")
     public void downloadAvatarFromDrive(@PathVariable Long avatarId, HttpServletResponse response) throws IOException {
         Avatar avatar = avatarService.getAvatar(avatarId);
@@ -48,5 +54,6 @@ import java.nio.file.Path;
         }
 
         }
+
     }
 

@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.http.converter.AbstractGenericHttpMessageConverter;
+import ru.hogwarts.school.model.Age;
 import ru.hogwarts.school.model.Student;
 
 import java.util.Collection;
@@ -19,4 +21,10 @@ public interface StudentService {
     List<Student> findByAgeBetween(Integer min, Integer max);
 
     List<Student> getStudentsByFaculty(long facultyId);
+
+    Long countAllStudents();
+
+    Age averageStudentAge();
+
+    List <Student> findLastFiveStudents();
 }

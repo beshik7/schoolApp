@@ -8,18 +8,21 @@ import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import ru.hogwarts.school.model.Age;
 import ru.hogwarts.school.model.Faculty;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
+import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.FacultyServiceImpl;
 import ru.hogwarts.school.service.StudentServiceImpl;
 import java.util.List;
 import java.util.Optional;
 import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 import static org.mockito.Mockito.*;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
 @WebMvcTest(StudentController.class)
 public class StudentControllerMockMvcTest {
@@ -33,6 +36,8 @@ public class StudentControllerMockMvcTest {
     private FacultyRepository facultyRepository;
     @MockBean
     private FacultyServiceImpl facultyService;
+    @MockBean
+    private StudentRepository studentRepository;
 
     @Test
     public void testCreateStudent() throws Exception {
@@ -60,7 +65,7 @@ public class StudentControllerMockMvcTest {
     public void testGetAllStudents() throws Exception {
         List<Student> students = List.of(new Student("John Doe", 20));
         when(studentService.getAll()).thenReturn(students);
-        mockMvc.perform(MockMvcRequestBuilders.get("/student"))
+        mockMvc.perform(get("/student"))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$").exists())
@@ -107,7 +112,7 @@ public class StudentControllerMockMvcTest {
 
         when(studentService.filteredByAge(age)).thenReturn(students);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/student/age/" + age))
+        mockMvc.perform(get("/student/age/" + age))
                 .andDo(print())
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$", hasSize(1)))
@@ -128,7 +133,7 @@ public class StudentControllerMockMvcTest {
 
         when(studentService.findByAgeBetween(min, max)).thenReturn(students);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/student/age/range")
+        mockMvc.perform(get("/student/age/range")
                         .param("min", min.toString())
                         .param("max", max.toString()))
                 .andExpect(status().isOk())
@@ -147,7 +152,7 @@ public class StudentControllerMockMvcTest {
 
         when(studentService.getStudentsByFaculty(facultyId)).thenReturn(students);
 
-        mockMvc.perform(MockMvcRequestBuilders.get("/student/faculty/" + facultyId))
+        mockMvc.perform(get("/student/faculty/" + facultyId))
                 .andDo(print())
 
                 .andExpect(status().isOk())
@@ -157,5 +162,49 @@ public class StudentControllerMockMvcTest {
 
         verify(studentService, times(1)).getStudentsByFaculty(facultyId);
     }
+    @Test
+    public void testCountAllStudents() throws Exception {
+        when(studentService.countAllStudents()).thenReturn(10L);
+
+        mockMvc.perform(get("/student/count"))
+                .andExpect(status().isOk())
+                .andExpect(content().string("10"));
     }
+
+    @Test
+    public void testAverageStudentAge() throws Exception {
+        Age age = () -> 20;
+        when(studentService.averageStudentAge()).thenReturn(age);
+
+        mockMvc.perform(get("/student/avg-age"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.age", is(20)));
+    }
+    @Test
+    public void testFindLastFiveStudents() throws Exception {
+        List<Student> student = List.of(
+                new Student("John Doe", 21),
+                new Student("Jane Smith", 22),
+                new Student("Anna Brown", 23),
+                new Student("Robert White", 24),
+                new Student("Michael Green", 25)
+        );
+        when(studentService.findLastFiveStudents()).thenReturn(student);
+        mockMvc.perform(get("/student/lst-five"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$", hasSize(5)))
+                .andExpect(jsonPath("$[0].name", is("John Doe")))
+                .andExpect(jsonPath("$[0].age", is(21)))
+                .andExpect(jsonPath("$[1].name", is("Jane Smith")))
+                .andExpect(jsonPath("$[1].age", is(22)))
+                .andExpect(jsonPath("$[2].name", is("Anna Brown")))
+                .andExpect(jsonPath("$[2].age", is(23)))
+                .andExpect(jsonPath("$[3].name", is("Robert White")))
+                .andExpect(jsonPath("$[3].age", is(24)))
+                .andExpect(jsonPath("$[4].name", is("Michael Green")))
+                .andExpect(jsonPath("$[4].age", is(25)));
+    }
+
+
+}
 

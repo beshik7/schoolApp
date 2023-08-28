@@ -1,5 +1,8 @@
 package ru.hogwarts.school.service;
 
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 import ru.hogwarts.school.exeption.AvatarNotFoundException;
@@ -13,6 +16,7 @@ import java.io.*;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.StandardOpenOption;
+import java.util.List;
 @Service
 public class AvatarServiceImpl implements AvatarService {
 
@@ -60,6 +64,15 @@ public class AvatarServiceImpl implements AvatarService {
     @Override
     public Avatar getAvatar(Long avatarId) {
         return avatarRepository.findById(avatarId).orElseThrow(() ->new AvatarNotFoundException("Avatar not found"));
+    }
+
+    @Override
+    public List<Avatar> getPaginatedAvatars(Integer page, Integer size) {
+        Pageable pageable = PageRequest.of(page, size);
+        Page<Avatar> avatars = avatarRepository.findAll(pageable);
+        return avatars.stream().toList();
+
+
     }
 
     private String getExtension(String fileName) {
