@@ -8,7 +8,6 @@ import java.util.Map;
 
 public interface StudentService {
     Student createStudent(Student student);
-    Student readStudent(Long id);
     Student updateStudent(Long id, Student student);
     Student getStudent(Long id);
     void deleteStudent(Long id);
@@ -16,4 +15,8 @@ public interface StudentService {
     Collection<Student> getAll();
 
     Collection<Student> filteredByAge(int age);
+
+    List<Student> findByAgeBetween(Integer min, Integer max);
+
+    List<Student> getStudentsByFaculty(long facultyId);
 }

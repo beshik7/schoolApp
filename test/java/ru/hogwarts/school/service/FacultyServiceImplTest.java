@@ -11,6 +11,7 @@ import ru.hogwarts.school.repository.FacultyRepository;
 import java.util.*;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
@@ -65,4 +66,22 @@ public class FacultyServiceImplTest {
         verify(facultyRepository, times(1)).findById(faculty.getId());
         assertEquals(faculty, fetched);
     }
+    @Test
+    public void getAllFacultiesTest() {
+        // Подготовка данных
+        Faculty faculty1 = new Faculty("Faculty1", "Blue");
+        Faculty faculty2 = new Faculty("Faculty2", "Red");
+        List<Faculty> faculties = Arrays.asList(faculty1, faculty2);
+
+        // Мокирование поведения
+        when(facultyRepository.findAll()).thenReturn(faculties);
+
+        // Выполнение теста
+        Collection<Faculty> result = facultyService.getAll();
+
+        // Проверка результата
+        assertEquals(faculties.size(), result.size());
+        assertTrue(result.containsAll(faculties));
+    }
+
 }

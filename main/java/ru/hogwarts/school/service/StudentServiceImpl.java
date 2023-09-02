@@ -9,6 +9,7 @@ import ru.hogwarts.school.repository.StudentRepository;
 
 import java.util.Collection;
 import java.util.Collections;
+import java.util.List;
 
 @Service
 public class StudentServiceImpl implements StudentService{
@@ -23,10 +24,7 @@ private final StudentRepository studentRepository;
     public Student createStudent(Student student) {
         return studentRepository.save(student);
     }
-    @Override
-    public Student readStudent(Long id) {
-        return studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundException("Student not found"));
-    }
+
     @Override
     public void deleteStudent(Long id) {
         studentRepository.deleteById(id);
@@ -43,8 +41,13 @@ private final StudentRepository studentRepository;
     }
 
     @Override
+    public List<Student> findByAgeBetween(Integer min, Integer max) {
+        return studentRepository.findByAgeBetween(min, max);
+    }
+
+    @Override
     public Student getStudent(Long id) {
-        return studentRepository.findById(id).orElseThrow(() -> new FacultyNotFoundException("Student not found"));
+        return studentRepository.findById(id).orElseThrow(() -> new StudentNotFoundException("Student not found"));
     }
     @Override
     public Student updateStudent(Long id, Student student) {
@@ -53,6 +56,11 @@ private final StudentRepository studentRepository;
         existing.setAge(student.getAge());
         studentRepository.save(existing);
         return existing;
+    }
+
+    @Override
+    public List<Student> getStudentsByFaculty(long facultyId) {
+    return  studentRepository.findByFacultyId(facultyId);
     }
 
 }
