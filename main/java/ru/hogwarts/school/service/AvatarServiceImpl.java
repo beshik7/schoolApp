@@ -1,5 +1,7 @@
 package ru.hogwarts.school.service;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
@@ -19,6 +21,7 @@ import java.nio.file.StandardOpenOption;
 import java.util.List;
 @Service
 public class AvatarServiceImpl implements AvatarService {
+    private Logger logger = LoggerFactory.getLogger(AvatarServiceImpl.class);
 
     private final AvatarRepository avatarRepository;
     private final StudentRepository studentRepository;
@@ -31,6 +34,7 @@ public class AvatarServiceImpl implements AvatarService {
 
     @Override
     public Avatar uploadAvatar(Long studentId, MultipartFile file) throws IOException {
+        logger.info("Method uploadAvatar invoked for studentId: {}", studentId);
         Student student = studentRepository.findById(studentId).orElseThrow(() -> new StudentNotFoundException("Student not found"));
         Path filePath = Path.of("./avatar", student + "." + getExtension(file.getOriginalFilename()));
 
@@ -58,16 +62,27 @@ public class AvatarServiceImpl implements AvatarService {
 
     @Override
     public Avatar getAvatarId(Long id) {
-        return avatarRepository.findById(id).orElseThrow(() -> new AvatarNotFoundException("Avatar not found"));
+        logger.info("Fetching Avatar by Id: {}", id);
+        return avatarRepository.findById(id).orElseThrow(() -> {
+            logger.warn("Avatar not found for id: {}", id);
+            new AvatarNotFoundException("Avatar not found");
+            return new AvatarNotFoundException("Avatar not found");
+        });
     }
 
     @Override
     public Avatar getAvatar(Long avatarId) {
-        return avatarRepository.findById(avatarId).orElseThrow(() ->new AvatarNotFoundException("Avatar not found"));
+        logger.info("Fetching Avatar by avatarId: {}", avatarId);
+        return avatarRepository.findById(avatarId).orElseThrow(() -> {
+            logger.warn("Avatar not found for avatarId: {}", avatarId);
+            new AvatarNotFoundException("Avatar not found");
+            return new AvatarNotFoundException("Avatar not found");
+        });
     }
 
     @Override
     public List<Avatar> getPaginatedAvatars(Integer page, Integer size) {
+        logger.debug("Fetching paginated avatars. Page: {}, Size: {}", page, size);
         Pageable pageable = PageRequest.of(page, size);
         Page<Avatar> avatars = avatarRepository.findAll(pageable);
         return avatars.stream().toList();
