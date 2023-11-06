@@ -14,6 +14,7 @@ import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.FacultyRepository;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.FacultyServiceImpl;
+import ru.hogwarts.school.service.Printing;
 import ru.hogwarts.school.service.StudentServiceImpl;
 import java.util.List;
 import java.util.Optional;
@@ -38,6 +39,8 @@ public class StudentControllerMockMvcTest {
     private FacultyServiceImpl facultyService;
     @MockBean
     private StudentRepository studentRepository;
+    @MockBean
+    private Printing printing;
 
     @Test
     public void testCreateStudent() throws Exception {
@@ -203,6 +206,24 @@ public class StudentControllerMockMvcTest {
                 .andExpect(jsonPath("$[3].age", is(24)))
                 .andExpect(jsonPath("$[4].name", is("Michael Green")))
                 .andExpect(jsonPath("$[4].age", is(25)));
+    }
+    @Test
+    public void testPrintingWithoutSyncTest() throws Exception {
+        // Выполнение запроса к эндпоинту
+        mockMvc.perform(MockMvcRequestBuilders.post("/student/printing-without-sync"))
+                .andExpect(status().isOk());
+
+        // Проверка, что метод printNamesWithoutSync был вызван ровно один раз
+        verify(printing, times(1)).printNamesWithoutSync();
+    }
+    @Test
+    public void testPrintingWithSyncTest() throws Exception {
+        // Выполнение запроса к эндпоинту
+        mockMvc.perform(MockMvcRequestBuilders.post("/student/printing-with-sync"))
+                .andExpect(status().isOk());
+
+        // Проверка, что метод printNamesWithSync был вызван ровно один раз
+        verify(printing, times(1)).printNamesWithSync();
     }
 
 

@@ -1,9 +1,11 @@
 package ru.hogwarts.school.controller;
+import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import ru.hogwarts.school.model.Age;
 import ru.hogwarts.school.model.Student;
 import ru.hogwarts.school.repository.StudentRepository;
 import ru.hogwarts.school.service.FacultyService;
+import ru.hogwarts.school.service.Printing;
 import ru.hogwarts.school.service.StudentService;
 import java.util.Collection;
 import java.util.List;
@@ -14,12 +16,14 @@ import java.util.List;
     private final StudentService studentService;
     private final FacultyService facultyService;
     private final StudentRepository studentRepository;
+    private final Printing printing;
 
 
-    public StudentController(StudentService studentService, FacultyService facultyService, StudentRepository studentRepository) {
+    public StudentController(StudentService studentService, FacultyService facultyService, StudentRepository studentRepository, Printing printing) {
         this.studentService = studentService;
         this.facultyService = facultyService;
         this.studentRepository = studentRepository;
+        this.printing = printing;
     }
 
     @GetMapping
@@ -66,7 +70,14 @@ import java.util.List;
     public List<Student> findLastFiveStudents() {
         return studentService.findLastFiveStudents();
     }
-
+    @PostMapping("/printing-without-sync")
+        public void Printing() {
+        printing.printNamesWithoutSync();
+    }
+    @PostMapping("/printing-with-sync")
+        public void printNamesSynchronously() {
+            printing.printNamesWithSync();
+        }
 
 
 }

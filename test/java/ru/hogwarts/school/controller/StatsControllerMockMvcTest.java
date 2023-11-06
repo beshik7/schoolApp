@@ -24,7 +24,7 @@ public class StatsControllerMockMvcTest {
     private StatsService statsService;
 
     @Test
-    public void testGetNamesStartingWithA() throws Exception {
+    public void testGetNamesStartingWithATest() throws Exception {
         when(statsService.getNamesStartingWithA()).thenReturn(Arrays.asList("Anna", "Alex"));
 
         mockMvc.perform(get("/stats/names-starts-with-a"))
@@ -32,7 +32,7 @@ public class StatsControllerMockMvcTest {
                 .andExpect(content().json("[\"Anna\", \"Alex\"]"));
     }
     @Test
-    public void testGetAverageAge() throws Exception {
+    public void testGetAverageAgeTest() throws Exception {
         when(statsService.getAverageAge()).thenReturn(OptionalDouble.of(25.5));
 
         mockMvc.perform(get("/stats/average-age"))
@@ -40,7 +40,7 @@ public class StatsControllerMockMvcTest {
                 .andExpect(content().string("25.5"));
     }
     @Test
-    public void testGetLongestFacultyName() throws Exception {
+    public void testGetLongestFacultyNameTest() throws Exception {
         when(statsService.getLongestFacultyName()).thenReturn("Faculty of Engineering");
 
         mockMvc.perform(get("/stats/longest-faculty-name"))
@@ -48,7 +48,7 @@ public class StatsControllerMockMvcTest {
                 .andExpect(content().string("Faculty of Engineering"));
     }
     @Test
-    public void testCalculateSum() throws Exception {
+    public void testCalculateSumTest() throws Exception {
         mockMvc.perform(get("/stats/calc-sum"))
                 .andExpect(status().isOk())
                 .andExpect(content().string("500000500000"));
